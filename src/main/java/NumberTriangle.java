@@ -88,8 +88,32 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        // If path is empty, return this node's root value
+        if (path.isEmpty()) {
+            return this.root;
+        }
+        
+        // Follow the path character by character
+        NumberTriangle current = this;
+        for (int i = 0; i < path.length(); i++) {
+            char direction = path.charAt(i);
+            if (direction == 'l') {
+                current = current.left;
+            } else if (direction == 'r') {
+                current = current.right;
+            } else {
+                // Invalid character in path - this shouldn't happen based on assumptions
+                throw new IllegalArgumentException("Invalid path character: " + direction);
+            }
+            
+            // If we've reached a null node, the path is invalid
+            if (current == null) {
+                throw new IllegalArgumentException("Path leads to null node");
+            }
+        }
+        
+        // Return the root value of the final node
+        return current.root;
     }
 
     /** Read in the NumberTriangle structure from a file.
