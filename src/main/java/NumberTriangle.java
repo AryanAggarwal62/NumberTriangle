@@ -109,26 +109,46 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
-
-        // will need to return the top of the NumberTriangle,
-        // so might want a variable for that.
-        NumberTriangle top = null;
-
+        // Read all lines first to determine structure
+        java.util.List<String> lines = new java.util.ArrayList<>();
         String line = br.readLine();
         while (line != null) {
-
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
-
-            // TODO process the line
-
-            //read the next line
+            lines.add(line);
             line = br.readLine();
         }
         br.close();
-        return top;
+        
+        // Create nodes array
+        int totalRows = lines.size();
+        NumberTriangle[][] nodes = new NumberTriangle[totalRows][];
+        for (int i = 0; i < totalRows; i++) {
+            nodes[i] = new NumberTriangle[i + 1];
+        }
+        
+        // Create all NumberTriangle objects
+        for (int row = 0; row < totalRows; row++) {
+            String[] numbers = lines.get(row).trim().split("\\s+");
+            for (int col = 0; col < numbers.length; col++) {
+                int value = Integer.parseInt(numbers[col]);
+                nodes[row][col] = new NumberTriangle(value);
+            }
+        }
+        
+        // Connect nodes to their children
+        for (int row = 1; row < totalRows; row++) {
+            for (int col = 0; col < nodes[row].length; col++) {
+                // Connect to left child (if exists)
+                if (col < nodes[row-1].length) {
+                    nodes[row-1][col].setLeft(nodes[row][col]);
+                }
+                // Connect to right child (if exists)
+                if (col > 0) {
+                    nodes[row-1][col-1].setRight(nodes[row][col]);
+                }
+            }
+        }
+        
+        return nodes[0][0];
     }
 
     public static void main(String[] args) throws IOException {
